@@ -1,0 +1,19 @@
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+      - src/prepare.py
+    outs:
+      - data/iris.csv
+  train:
+    cmd: python src/train.py
+    deps:
+      - data/iris.csv
+      - src/train.py
+    params:
+      - train.n_estimators
+      - train.max_depth
+    outs:
+      - models/model.pkl
+    metrics:
+      - metrics.json

@@ -1,0 +1,38 @@
+name: CD Pipeline (Deploy to HF Spaces)
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Pull Model from DVC
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: dvc pull
+
+      - name: Push to Hugging Face Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USER: RIRises
+          SPACE_NAME: iris-api-vasiliev
+        run: |
+          git config --global user.email "bot@github.actions"
+          git config --global user.name "GitHub CD Bot"
+          git clone https://$HF_USER:$HF_TOKEN@huggingface.co/spaces/$HF_USER/$SPACE_NAME space_repo
+          cp -r src/ space_repo/src/
+          cp -r models/ space_repo/models/
+          cp requirements.txt space_repo/requirements.txt
+          cp Dockerfile space_repo/Dockerfile
+          find space_repo -name "mlflow.db" -type f -delete
+          find space_repo -name "__pycache__" -type d -exec rm -rf {} +
+          cd space_repo
+          git add .
+          git commit -m "Deploy from GitHub Actions" || echo "No changes to commit"
+          git push

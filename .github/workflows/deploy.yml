@@ -18,7 +18,7 @@ jobs:
 
       - name: Setup DVC
         run: |
-          pip install dvc
+          pip install dvc dvc-s3
           dvc --version
 
       - name: Pull Model from DVC
@@ -30,8 +30,8 @@ jobs:
       - name: Push to Hugging Face Spaces
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_USER: ТВОЙ_ЛОГИН_НА_HUGGING_FACE
-          SPACE_NAME: ИМЯ_ТВОЕГО_СПЕЙСА
+          HF_USER: RIRises
+          SPACE_NAME: iris-api-vasiliev
         run: |
           git config --global user.email "bot@github.actions"
           git config --global user.name "GitHub CD Bot"

@@ -21,9 +21,6 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
 
-      - name: Setup CML
-        uses: iterative/setup-cml@v3
-
       - name: Установка зависимостей
         run: pip install -r requirements.txt
 
@@ -36,13 +33,13 @@ jobs:
       - name: Воспроизведение пайплайна (обучение)
         run: dvc repro
 
-      - name: Создание отчета CML
+      - name: Создание отчета
         env:
-          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "## 📊 Результаты эксперимента" > report.md
           echo "### 🔄 Изменения параметров:" >> report.md
           dvc params diff main --md >> report.md
           echo "### 📈 Изменения метрик:" >> report.md
           dvc metrics diff main --md >> report.md
-          cml comment create report.md
+          gh pr comment ${{ github.event.pull_request.number }} -F report.md

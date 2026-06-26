@@ -3,3 +3,4 @@ pyyaml
 joblib
 pre-commit
 ruff
+mlflow

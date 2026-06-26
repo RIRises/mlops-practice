@@ -1,4 +1,3 @@
-  cat > .github/workflows/monitor.yml << 'EOF'
   name: Uptime Monitor
 
   on:
@@ -25,4 +24,3 @@
               --repo ${{ github.repository }} \
               --title "Сбой в продакшене: Сервер недоступен!" \
               --body "Эндпоинт /health не ответил статусом 200. Проверьте логи сервера Hugging Face."
-    EOF

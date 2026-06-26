@@ -11,6 +11,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup DVC
+        run: |
+          pip install dvc
+          dvc --version
+
       - name: Pull Model from DVC
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -20,8 +30,8 @@ jobs:
       - name: Push to Hugging Face Spaces
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_USER: RIRises
-          SPACE_NAME: iris-api-vasiliev
+          HF_USER: ТВОЙ_ЛОГИН_НА_HUGGING_FACE
+          SPACE_NAME: ИМЯ_ТВОЕГО_СПЕЙСА
         run: |
           git config --global user.email "bot@github.actions"
           git config --global user.name "GitHub CD Bot"

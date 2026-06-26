@@ -1,0 +1,28 @@
+  cat > .github/workflows/monitor.yml << 'EOF'
+  name: Uptime Monitor
+
+  on:
+    schedule:
+      - cron: '0 * * * *'
+    workflow_dispatch:
+
+  jobs:
+    ping_server:
+      runs-on: ubuntu-latest
+      permissions:
+        issues: write
+      steps:
+        - name: Check Health Endpoint
+          run: |
+            curl --fail https://RIRises-iris-api-vasiliev.hf.space/health
+
+        - name: Create Issue on Failure
+          if: failure()
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            gh issue create \
+              --repo ${{ github.repository }} \
+              --title "Сбой в продакшене: Сервер недоступен!" \
+              --body "Эндпоинт /health не ответил статусом 200. Проверьте логи сервера Hugging Face."
+    EOF
